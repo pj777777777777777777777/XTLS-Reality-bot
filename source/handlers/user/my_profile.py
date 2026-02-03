@@ -21,7 +21,7 @@ async def show_my_profile(
     await call.message.answer(
         text=await create_user_info_message_text(user_id=call.from_user.id),
         parse_mode=types.ParseMode.HTML,
-        reply_markup=await inline.insert_button_back_to_main_menu(
+        reply_markup=await inline.user_profile_keyboard(
             language_code=call.from_user.language_code,
         ),
     )

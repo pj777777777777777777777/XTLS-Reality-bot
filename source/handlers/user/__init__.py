@@ -10,6 +10,7 @@ from .configs_menu.show_configs import *
 from .guide import register_show_help_guide_handlers
 from .my_profile import show_my_profile
 from .pay import *
+from .referral_info import show_referral_info
 from .start import *
 
 
@@ -35,6 +36,11 @@ def register_user_handlers(dp: Dispatcher):
         dp.register_callback_query_handler(
             show_my_profile,
             lambda call: call.data == "my_profile",
+            state="*",
+        )
+        dp.register_callback_query_handler(
+            show_referral_info,
+            lambda call: call.data == "referral_info",
             state="*",
         )
 

@@ -17,6 +17,7 @@ class Creator(DatabaseConnector):
         await self._create_table_users()
         await self._create_table_vpn_configs()
         await self._create_table_bonus_configs_for_users()
+        await self._create_table_referrals()
         logger.warning("All tables were created")
 
     async def _drop_all_tables(self):
@@ -91,3 +92,18 @@ class Creator(DatabaseConnector):
             logger.debug("Table bonus_configs_for_users was created")
         else:
             logger.error("Error while creating table bonus_configs_for_users")
+
+    async def _create_table_referrals(self):
+        query = """--sql
+            CREATE TABLE referrals (
+                id SERIAL PRIMARY KEY NOT NULL,
+                referrer_id BIGINT NOT NULL REFERENCES users(user_id),
+                referred_user_id BIGINT NOT NULL UNIQUE REFERENCES users(user_id),
+                created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                bonus_awarded BOOLEAN NOT NULL DEFAULT FALSE
+            );
+            """
+        if await self._execute_query(query) == []:
+            logger.debug("Table referrals was created")
+        else:
+            logger.error("Error while creating table referrals")
