@@ -39,3 +39,17 @@ class GlobalStatistics:
     users_with_last_day_left_subscription: int
     users_with_two_days_left_subscription: int
     active_configs_count: int
+
+
+@dataclass
+class ReferralTopUser:
+    user_id: int
+    username: str | None
+    referrals_count: int
+
+
+@dataclass
+class ReferralStatistics:
+    total_referrals: int
+    total_bonus_awarded: int
+    top_referrers: list[ReferralTopUser]

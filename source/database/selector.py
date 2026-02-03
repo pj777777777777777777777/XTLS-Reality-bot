@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 
 from source.data import config
-from source.utils.models import GlobalStatistics, UserInfo, VpnConfigDB
+from source.utils.models import GlobalStatistics, ReferralStatistics, ReferralTopUser, UserInfo, VpnConfigDB
 
 from .connector import DatabaseConnector
 
@@ -77,6 +77,9 @@ class Selector(DatabaseConnector):
         bonus_configs_count = result[0][0] if result else 0
         logger.debug(f"Bonus configs count for user {user_id} was fetched: {bonus_configs_count}")
         return bonus_configs_count
+
+    async def get_bonus_configs_count_by_user_id(self, user_id: int) -> int:
+        return await self._get_bonus_configs_count_by_user_id(user_id=user_id)
 
     async def is_user_registered(self, user_id: int) -> bool:
         query = f"""--sql
@@ -253,6 +256,55 @@ class Selector(DatabaseConnector):
         )
         logger.debug(f"Global stats: {global_stats}")
         return global_stats
+
+    async def get_referrals_count_by_referrer(self, user_id: int) -> int:
+        query = f"""--sql
+            SELECT COUNT(*)
+            FROM referrals
+            WHERE referrer_id = {user_id};
+        """
+        result = await self._execute_query(query)
+        referrals_count = result[0][0] if result else 0
+        logger.debug(f"Referrals count for user {user_id}: {referrals_count}")
+        return referrals_count
+
+    async def get_referral_stats(self, top_limit: int = 10) -> ReferralStatistics:
+        total_referrals_query = """--sql
+            SELECT COUNT(*)
+            FROM referrals;
+        """
+        total_bonus_query = """--sql
+            SELECT COUNT(*)
+            FROM referrals
+            WHERE bonus_awarded = TRUE;
+        """
+        top_referrers_query = f"""--sql
+            SELECT referrals.referrer_id, users.username, COUNT(*) AS referrals_count
+            FROM referrals
+            JOIN users ON users.user_id = referrals.referrer_id
+            GROUP BY referrals.referrer_id, users.username
+            ORDER BY referrals_count DESC
+            LIMIT {top_limit};
+        """
+        total_referrals_result = await self._execute_query(total_referrals_query)
+        total_bonus_result = await self._execute_query(total_bonus_query)
+        top_referrers_result = await self._execute_query(top_referrers_query)
+
+        top_referrers = [
+            ReferralTopUser(
+                user_id=record[0],
+                username=record[1],
+                referrals_count=record[2],
+            )
+            for record in (top_referrers_result or [])
+        ]
+        referral_stats = ReferralStatistics(
+            total_referrals=total_referrals_result[0][0] if total_referrals_result else 0,
+            total_bonus_awarded=total_bonus_result[0][0] if total_bonus_result else 0,
+            top_referrers=top_referrers,
+        )
+        logger.debug(f"Referral stats: {referral_stats}")
+        return referral_stats
 
     async def get_unblocked_users_ids(self) -> list[int]:
         query = """--sql

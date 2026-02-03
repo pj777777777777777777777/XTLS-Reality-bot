@@ -74,6 +74,13 @@ async def add_buttons_for_admin_main_menu(keyboard: InlineKeyboardMarkup, langua
         InlineKeyboardButton(
             text=localizer.get_user_localized_text(
                 user_language_code=language_code,
+                text_localization=localizer.button.referral_statistics,
+            ),
+            callback_data="show_referral_statistics",
+        ),
+        InlineKeyboardButton(
+            text=localizer.get_user_localized_text(
+                user_language_code=language_code,
                 text_localization=localizer.button.create_mailing,
             ),
             callback_data="create_mailing",
@@ -142,6 +149,24 @@ async def insert_button_back_to_main_menu(
             ),
             callback_data="back_to_main_menu",
         )
+    )
+    return keyboard
+
+
+async def user_profile_keyboard(language_code: str) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(row_width=1)
+    keyboard.insert(
+        InlineKeyboardButton(
+            text=localizer.get_user_localized_text(
+                user_language_code=language_code,
+                text_localization=localizer.button.referral_program,
+            ),
+            callback_data="referral_info",
+        )
+    )
+    keyboard = await insert_button_back_to_main_menu(
+        keyboard=keyboard,
+        language_code=language_code,
     )
     return keyboard
 

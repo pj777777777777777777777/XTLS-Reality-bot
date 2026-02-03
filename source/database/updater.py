@@ -57,3 +57,18 @@ class Updater(DatabaseConnector):
             return False
         logger.debug(f"Set bonus config generations to user {user_id}")
         return True
+
+    async def mark_referral_bonus_awarded(self, referred_user_id: int) -> int | None:
+        query = f"""--sql
+            UPDATE referrals
+            SET bonus_awarded = TRUE
+            WHERE referred_user_id = {referred_user_id}
+            AND bonus_awarded = FALSE
+            RETURNING referrer_id;
+        """
+        result = await self._execute_query_with_returning_one(query)
+        if not result:
+            logger.debug(f"Referral bonus already awarded or missing for {referred_user_id}")
+            return None
+        logger.debug(f"Referral bonus marked as awarded for user {referred_user_id}")
+        return result["referrer_id"]

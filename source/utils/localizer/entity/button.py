@@ -101,3 +101,11 @@ class LocalizedButtonText(BaseLocalizedObject):
     @property
     def create_mailing(self) -> LocalizedText:
         return self._get_entity_text("create_mailing")
+
+    @property
+    def referral_program(self) -> LocalizedText:
+        return self._get_entity_text("referral_program")
+
+    @property
+    def referral_statistics(self) -> LocalizedText:
+        return self._get_entity_text("referral_statistics")

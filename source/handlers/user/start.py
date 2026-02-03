@@ -22,10 +22,35 @@ async def start(message: types.Message, state: FSMContext):
         new_user = True
     else:
         new_user = False
+
+    referral_arg = message.get_args()
+    referrer_id = int(referral_arg) if referral_arg.isdigit() else None
     await db_manager.upsert_user(
         user_id=message.from_user.id,
         username=message.from_user.username if message.from_user.username else None,
     )
+    if (
+        new_user
+        and referrer_id
+        and referrer_id != message.from_user.id
+        and await db_manager.is_user_registered(user_id=referrer_id)
+    ):
+        inserted_referrer_id = await db_manager.insert_referral(
+            referrer_id=referrer_id,
+            referred_user_id=message.from_user.id,
+        )
+        if inserted_referrer_id:
+            awarded_referrer_id = await db_manager.mark_referral_bonus_awarded(
+                referred_user_id=message.from_user.id
+            )
+            if awarded_referrer_id:
+                current_bonus = await db_manager.get_bonus_configs_count_by_user_id(
+                    user_id=awarded_referrer_id
+                )
+                await db_manager.upsert_bonus_config_generations_to_user(
+                    user_id=awarded_referrer_id,
+                    new_bonus_config_count=current_bonus + 1,
+                )
 
     await message.answer(
         text=localizer.get_user_localized_text(

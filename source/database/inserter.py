@@ -54,3 +54,24 @@ class Inserter(DatabaseConnector):
         """
         await self._execute_query(query)
         logger.debug(f"Bonus config count for user {user_id} was upserted: {count}")
+
+    async def insert_referral(self, referrer_id: int, referred_user_id: int) -> int | None:
+        query = f"""--sql
+            INSERT INTO referrals (referrer_id, referred_user_id)
+            VALUES ({referrer_id}, {referred_user_id})
+            ON CONFLICT (referred_user_id)
+            DO NOTHING
+            RETURNING referrer_id;
+        """
+        result = await self._execute_query_with_returning_one(query)
+        if not result:
+            logger.debug(
+                "Referral was not inserted (duplicate or error) "
+                f"for referred user {referred_user_id}"
+            )
+            return None
+        logger.debug(
+            f"Referral was inserted for referrer {result['referrer_id']} "
+            f"and referred user {referred_user_id}"
+        )
+        return result["referrer_id"]

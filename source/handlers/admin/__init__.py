@@ -12,6 +12,7 @@ from .create_mailing import (
     send_mailing_message,
 )
 from .delete_keyboard import *
+from .referral_stats import show_referral_stats
 from .reject_payment import *
 from .show_stats import *
 from .show_user import register_admin_show_user_handlers
@@ -50,6 +51,11 @@ def register_admin_handlers(dp: Dispatcher):
         dp.register_callback_query_handler(
             show_global_stats,
             lambda call: call.data.startswith("show_statistics"),
+            state="*",
+        )
+        dp.register_callback_query_handler(
+            show_referral_stats,
+            lambda call: call.data.startswith("show_referral_statistics"),
             state="*",
         )
 

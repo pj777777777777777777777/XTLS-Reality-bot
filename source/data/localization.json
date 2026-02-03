@@ -175,6 +175,14 @@
         "mailing_message_sent": {
             "en": "✅Message sent to all users",
             "ru": "✅Сообщение отправлено всем пользователям"
+        },
+        "referral_info": {
+            "en": "👥 <b>Referral program</b>\n\nInvite friends using your personal link:\n<code>{referral_link}</code>\n\nInvited users: <b>{referrals_count}</b>\n\n💡 Bonus configs are granted when a new user registers using your link.",
+            "ru": "👥 <b>Реферальная программа</b>\n\nПриглашай друзей по персональной ссылке:\n<code>{referral_link}</code>\n\nПриглашено пользователей: <b>{referrals_count}</b>\n\n💡 Бонусные конфиги начисляются при регистрации пользователя по твоей ссылке."
+        },
+        "referral_stats": {
+            "en": "👥 <b>Referral statistics</b>\n\nTotal referrals: <b>{total_referrals}</b>\nBonus awarded: <b>{total_bonus_awarded}</b>\n\n🏆 <b>Top referrers</b>:\n{top_referrers}",
+            "ru": "👥 <b>Реферальная статистика</b>\n\nВсего рефералов: <b>{total_referrals}</b>\nБонусов начислено: <b>{total_bonus_awarded}</b>\n\n🏆 <b>Топ пригласивших</b>:\n{top_referrers}"
         }
     },
     "button": {
@@ -269,6 +277,14 @@
         "confirm_mailing_message": {
             "en": "📨Send",
             "ru": "📨Отправить"
+        },
+        "referral_program": {
+            "en": "👥Referral program",
+            "ru": "👥Реферальная программа"
+        },
+        "referral_statistics": {
+            "en": "👥Referral statistics",
+            "ru": "👥Реферальная статистика"
         }
     }
 }

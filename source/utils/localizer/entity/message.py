@@ -189,3 +189,11 @@ class LocalizedMessageText(BaseLocalizedObject):
     @property
     def mailing_message_sent(self) -> LocalizedText:
         return self._get_entity_text("mailing_message_sent")
+
+    @property
+    def referral_info(self) -> LocalizedText:
+        return self._get_entity_text("referral_info")
+
+    @property
+    def referral_stats(self) -> LocalizedText:
+        return self._get_entity_text("referral_stats")
